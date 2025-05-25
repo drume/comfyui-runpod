@@ -1,10 +1,7 @@
-# Base OS
 FROM ubuntu:22.04
 
-# Avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install required system packages
 RUN apt update && apt install -y \
     python3 \
     python3-pip \
@@ -14,21 +11,25 @@ RUN apt update && apt install -y \
     libglib2.0-0 \
     && apt clean
 
-# Set working directory
 WORKDIR /workspace
 
-# Clone the official ComfyUI repo
+# ✅ Clone ComfyUI BEFORE creating folders inside it
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git
 
-# Set working dir to ComfyUI folder
 WORKDIR /workspace/ComfyUI
 
 # Install Python dependencies
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# Expose the port ComfyUI runs on
+# Install ComfyUI Manager
+RUN mkdir -p custom_nodes && \
+    cd custom_nodes && \
+    git clone https://github.com/ltdrdata/ComfyUI-Manager.git
+
+# ✅ Only now create empty checkpoints folder (no overwrite)
+RUN mkdir -p /workspace/ComfyUI/models/checkpoints
+
 EXPOSE 3000
 
-# Launch ComfyUI
 CMD ["python3", "main.py", "--listen", "0.0.0.0", "--port", "3000"]
