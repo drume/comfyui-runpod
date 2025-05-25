@@ -19,4 +19,4 @@ RUN apt update && apt install -y \
 WORKDIR /workspace
 
 # Clone official ComfyUI repo
-RUN git clone http
+RUN git clone https://github.com/comfyanonymous/ComfyUI.git
