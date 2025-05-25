@@ -20,3 +20,21 @@ WORKDIR /workspace
 
 # Clone official ComfyUI repo
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git
+
+# Move into the ComfyUI directory
+WORKDIR /workspace/ComfyUI
+
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Install ComfyUI Manager as a custom node
+RUN mkdir -p /workspace/ComfyUI/custom_nodes && \
+    cd /workspace/ComfyUI/custom_nodes && \
+    git clone https://github.com/ltdrdata/ComfyUI-Manager.git
+
+# Expose ComfyUI web port
+EXPOSE 3000
+
+# Launch ComfyUI when the container starts
+CMD ["python3", "main.py", "--listen", "0.0.0.0", "--port", "3000"]
